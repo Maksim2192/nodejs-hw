@@ -3,17 +3,21 @@ import { model, Schema } from 'mongoose';
 const NoteSchema = new Schema(
   {
     title: {
-      type: String,
+          type: String,
+        required: true,
       trim: true,
     },
     content: {
       type: String,
-      trim: true,
+        trim: true,
+      default: "", 
+  required: false, 
     },
     tag: {
       type: String,
       required: true,
-      enum: ['Work', 'Personal', 'Meeting', 'Shopping', 'Ideas', 'Travel', 'Finance', 'Health', 'Important', 'Todo'],
+        enum: ['Work', 'Personal', 'Meeting', 'Shopping', 'Ideas', 'Travel', 'Finance', 'Health', 'Important', 'Todo'],
+      default: "Todo",
     },
   },
   {
@@ -22,4 +26,4 @@ const NoteSchema = new Schema(
   },
 );
 
-export const Note = model('Note', NoteSchema, 'Note');
+export const Note = model('Note', NoteSchema);
