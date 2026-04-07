@@ -2,34 +2,39 @@
 
 import { Joi, Segments } from 'celebrate';
 import { isValidObjectId } from 'mongoose';
+import { TAGS } from '../constants/tags.js';
 
-export const createStudentSchema = {
+export const createNoteSchema = {
   [Segments.BODY]: Joi.object({
-    name: Joi.string().min(3).max(30).required().messages({
-      "string.base": "Name must be a string",
-      "string.min": "Name should have at least {#limit} characters",
-      "string.max": "Name should have at most {#limit} characters",
-      "any.required": "Name is required",
+    title: Joi.string().min(3).max(100).required().messages({
+      "string.base": "Title must be a string",
+      "string.min": "Title should have at least {#limit} characters",
+      "string.max": "Title should have at most {#limit} characters",
+      "any.required": "Title is required",
     }),
-    age: Joi.number().integer().min(12).max(65).required().messages({
-      "number.base": "Age must be a number",
-      "number.min": "Age must be at least {#limit}",
-      "number.max": "Age must be at most {#limit}",
-      "any.required": "Age is required",
+    content: Joi.string().allow("").messages({
+      "string.base": "Content must be a string",
     }),
-    gender: Joi.string().valid("male", "female", "other").required().messages({
-      "any.only": "Gender must be one of: male, female, or other",
-      "any.required": "Gender is required",
+    tag: Joi.string().valid(...TAGS).default("Todo").messages({
+      "any.only": `Tag must be one of: ${TAGS.join(", ")}`,
     }),
-    avgMark: Joi.number().min(2).max(12).required().messages({
-      "number.base": "Average mark must be a number",
-      "number.min": "Average mark must be at least {#limit}",
-      "number.max": "Average mark must be at most {#limit}",
-      "any.required": "Average mark is required",
-    }),
-    onDuty: Joi.boolean().messages({
-      "boolean.base": "onDuty must be a boolean value",
-    }),
+  }),
+};
+
+export const getAllNotesSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    perPage: Joi.number().integer().min(1).max(20).default(10),
+    tag: Joi.string().valid(...TAGS),
+    search: Joi.string().allow(""),
+  }),
+};
+
+export const updateNoteSchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(3).max(100),
+    content: Joi.string().allow(""),
+    tag: Joi.string().valid(...TAGS),
   }).min(1),
 };
 
@@ -37,7 +42,7 @@ const objectIdValidator = (value, helpers) => {
   return !isValidObjectId(value) ? helpers.message('Invalid id format') : value;
 };
 
-export const studentIdParamSchema = {
+export const NoteIdParamSchema = {
   [Segments.PARAMS]: Joi.object({
     studentId: Joi.string().custom(objectIdValidator).required(),
   }),
