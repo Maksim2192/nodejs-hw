@@ -73,7 +73,7 @@ export const deleteNote = async (req, res, next) => {
       throw createHttpError(404, 'Note not found');
     }
 
-    res.status(200).send(Note);
+    res.status(200).send(note);
   } catch (error) {
     next(error);
   }
