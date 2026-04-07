@@ -7,7 +7,27 @@ export const getAllNotes = async (req, res) => {
 };
 
 export const getNoteById = async (req, res, next) => {
-  try {
+  const { page = 1, perPage = 10 } = req.query;
+
+  const skip = (page - 1) * perPage;
+
+  const NotesQuery = Note.find();
+
+    const [totalItems, notes] = await Promise.all([
+    NotesQuery.clone().countDocuments(),
+    NotesQuery.skip(skip).limit(perPage),
+  ]);
+	
+  const totalPages = Math.ceil(totalItems / perPage);
+
+  res.status(200).json({
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    notes,
+  });
+    try {
     const { noteId } = req.params;
     const note = await Note.findById(noteId);
 
