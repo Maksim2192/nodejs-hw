@@ -9,8 +9,10 @@ import { errorHandler } from './middleware/errorHandler.js';
 import notesRouter from './routes/notesRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
+app.use(cookieParser());
 const PORT = process.env.PORT || 3000;
 
 app.use(authRoutes);
