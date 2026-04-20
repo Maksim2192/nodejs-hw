@@ -17,7 +17,7 @@ export const getAllNotes = async (req, res, next) => {
       filter.$text = { $search: search };
     }
 
-    const NotesQuery = Note.find(filter);
+    const NotesQuery = Note.find( filter, { userId: req.user._id });
 
     const [totalNotes, notes] = await Promise.all([
       Note.countDocuments(filter),
@@ -56,7 +56,11 @@ export const getNoteById = async (req, res, next) => {
 
 export const createNote = async (req, res, next) => {
   try {
-    const note = await Note.create(req.body);
+    const note = await Note.create({
+      ...req.body,
+      userId: req.user._id, 
+    });
+
     res.status(201).json(note);
   } catch (error) {
     next(error);
