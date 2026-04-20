@@ -30,7 +30,7 @@ export const getAllNotes = async (req, res, next) => {
       perPage: Number(perPage),
       totalItems: totalNotes,
       totalPages,
-      data: notes,
+      notes: notes,
     });
   } catch (error) {
     next(error);
@@ -76,7 +76,7 @@ export const deleteNote = async (req, res, next) => {
       throw createHttpError(404, 'Note not found or access denied');
     }
 
-    res.status(204).send();
+    res.status(200).json(note);
   } catch (error) {
     next(error);
   }
@@ -89,7 +89,7 @@ export const updateNote = async (req, res, next) => {
     const note = await Note.findOneAndUpdate(
       { _id: noteId, userId: req.user._id },
       req.body,
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!note) {
